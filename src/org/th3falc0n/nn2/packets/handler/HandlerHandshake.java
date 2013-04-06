@@ -2,6 +2,7 @@ package org.th3falc0n.nn2.packets.handler;
 
 import org.th3falc0n.nn2.Address;
 import org.th3falc0n.nn2.Port;
+import org.th3falc0n.nn2.Router;
 import org.th3falc0n.nn2.packets.Packet;
 
 public class HandlerHandshake extends PacketHandler {
@@ -24,6 +25,7 @@ public class HandlerHandshake extends PacketHandler {
 		if(!port.isValidated()) {
 			if(packet.getData()[0] == 42) {
 				port.setRemoteAddress(packet.getSource());
+				Router.$Instance.getRoutes().get(port).put(port.getRemoteAddress().toString(), 0);
 				port.setValidated();
 				port.enqueuePacket(getAcceptPacket(port.getRemoteAddress()));
 				port.log("Handshake successfull.");
@@ -32,6 +34,7 @@ public class HandlerHandshake extends PacketHandler {
 			{
 				if(packet.getData()[0] == 84) {
 					port.setRemoteAddress(packet.getSource());
+					Router.$Instance.getRoutes().get(port).put(port.getRemoteAddress().toString(), 0);
 					port.setValidated();
 					port.log("Handshake successfull.");
 				}

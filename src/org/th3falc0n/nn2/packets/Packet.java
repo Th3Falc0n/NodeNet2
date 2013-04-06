@@ -8,6 +8,7 @@ import org.th3falc0n.nn2.Address;
 
 public class Packet {	
 	int id;
+	int hops;
 	byte[] data;
 	Address to;
 	Address from;
@@ -23,10 +24,11 @@ public class Packet {
 		
 		int length = data != null ? data.length : 0;
 		
-		stream.write(getPacketID());
+		stream.writeInt(id);
+		stream.writeInt(hops);
 		stream.write(to.getArray());
 		stream.write(from.getArray());
-		stream.write(length);
+		stream.writeInt(length);
 		
 		if(data != null) {
 			stream.write(data);
@@ -35,17 +37,20 @@ public class Packet {
 		stream.flush();
 	}
 	
-	public static Packet pullFromStream(DataInputStream stream) throws IOException {
-		int id = stream.read();
+	public static Packet pullFromStream(DataInputStream stream) throws IOException {		
+		int id = stream.readInt();
 		byte[] to = new byte[16];
 		byte[] from = new byte[16];
+		
+		int hops = stream.readInt();
 		
 		stream.read(to);
 		stream.read(from);
 		
 		Packet packet = new Packet(id, new Address(to), new Address(from));
+		packet.hops = hops;
 		
-		int length = stream.read();
+		int length = stream.readInt();
 		
 		byte[] buffer = new byte[length];
 		
@@ -74,5 +79,13 @@ public class Packet {
 	
 	public void setData(byte[] d) {
 		data = d;
+	}
+
+	public void increaseHops() {
+		hops++;
+	}
+
+	public int getHops() {
+		return hops;
 	}
 }

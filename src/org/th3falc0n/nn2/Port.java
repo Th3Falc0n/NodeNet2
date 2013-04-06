@@ -4,9 +4,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 import java.util.Queue;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.th3falc0n.nn2.packets.Packet;
 import org.th3falc0n.nn2.packets.handler.PacketHandler;
 
@@ -20,6 +21,7 @@ public class Port {
 	volatile DataInputStream in;
 	
 	volatile Queue<Packet> queue = new ConcurrentLinkedQueue<Packet>();
+	volatile List<String> optimizedAddresses = new Vector<String>(0, 1);
 	
 	volatile Address remoteAddress;
 
@@ -31,7 +33,14 @@ public class Port {
 					if(queue.size() > 0) {
 						queue.poll().sendOnStream(out);
 					}
+					else
+					{
+						Thread.sleep(1);
+					}
 				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -46,14 +55,22 @@ public class Port {
 			while(!stop) {
 				try {
 					Packet income = Packet.pullFromStream(in);
+					income.increaseHops();
+					
+					Router.$Instance.learnRoute(Port.this, income.getSource().toString(), income.getHops());
+					
 					if(income.getDestination().toString().equals(Router.$Instance.getAddress().toString())
 					|| income.getDestination().isStraightcast()) {
+						
 						PacketHandler.handlePacketForID(income, Port.this);
 					}
 					else
-					{
-						//TODO: ROUTING!!!
-						Port.this.log("Packet for routing received. This version has no routing :( Packet is lost forever");
+					{						
+						if(income.getHops() > 1000) {
+							continue;
+						}
+						Port.this.log("Routing packet from " + income.getSource().toString() + " to " + income.getDestination().toString());
+						Router.$Instance.routePacket(income);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -102,6 +119,14 @@ public class Port {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isAddressOptimized(Address addr) {
+		return optimizedAddresses.contains(addr.toString());
+	}
+	
+	public void setAddressOptimized(Address addr) {
+		optimizedAddresses.add(addr.toString());
 	}
 	
 	public void log(String msg) {

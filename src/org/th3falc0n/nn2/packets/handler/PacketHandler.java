@@ -14,10 +14,14 @@ public abstract class PacketHandler {
 
 	public static void init() {
 		HandlerHandshake.		$.register("handshake",		0);
+		HandlerRouting.			$.register("routing", 		1);
+		HandlerPing.			$.register("ping", 			2);
+		HandlerStreaming.		$.register("streaming",  1337);
 	}
 	
 	public static void handlePacketForID(Packet packet, Port port) {
-		if(!idMapping.containsKey(packet.getPacketID())) port.log("Inprocessible packet received.");
+		if(!idMapping.containsKey(packet.getPacketID())) { port.log("Inprocessible packet received ID=" + packet.getPacketID()); return; }
+		
 		idMapping.get(packet.getPacketID()).handlePacket(packet, port);
 	}
 	
