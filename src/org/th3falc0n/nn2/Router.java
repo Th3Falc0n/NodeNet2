@@ -20,12 +20,43 @@ import org.th3falc0n.nn2.packets.handler.PacketHandler;
 public class Router {
 	public static Router $Instance = new Router();
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		try {
 			$Instance.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
+
+		//TODO: No console here.
+		while(true) {
+			String input = sysin.readLine();
+			
+			String[] command = input.split(" ");
+			
+			if(command[0].equalsIgnoreCase("add")) {
+				Socket sock = new Socket(command[1], Integer.parseInt(command[2]));
+				
+				Port port = new Port(sock);
+				$Instance.addPort(port, false);
+			}
+			
+			if(command[0].equalsIgnoreCase("ping")) {
+				$Instance.routePacket(HandlerPing.getPingPacket(new Address(command[1])));
+			}
+			
+			if(command[0].equalsIgnoreCase("str")) {
+				new HandlerStreaming.NNSocket(16, 0, new Address(command[1])).getOutputStream().write(new String("Hallo da drauﬂen dies muss ein langer String werden :)").getBytes());
+			}
+			
+			if(command[0].equalsIgnoreCase("strs")) {
+				System.out.println("Awaiting stream");
+				byte[] test = new byte[32];
+				new HandlerStreaming.NNServerSocket(0).accept().getInputStream().read(test);
+				System.out.println("Accepted stream: " + new String(test));
+			}
 		}
 	}
 	
@@ -43,39 +74,6 @@ public class Router {
 		
 		ConnectionListener listener = new ConnectionListener();
 		listener.startListening();
-		
-		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
-
-		address = new Address();
-		
-		//TODO: No console here.
-		while(true) {
-			String input = sysin.readLine();
-			
-			String[] command = input.split(" ");
-			
-			if(command[0].equalsIgnoreCase("add")) {
-				Socket sock = new Socket(command[1], Integer.parseInt(command[2]));
-				
-				Port port = new Port(sock);
-				addPort(port, false);
-			}
-			
-			if(command[0].equalsIgnoreCase("ping")) {
-				routePacket(HandlerPing.getPingPacket(new Address(command[1])));
-			}
-			
-			if(command[0].equalsIgnoreCase("str")) {
-				new HandlerStreaming.NNSocket(16, 0, new Address(command[1])).getOutputStream().write(new String("Hallo da drauﬂen dies muss ein langer String werden :)").getBytes());
-			}
-			
-			if(command[0].equalsIgnoreCase("strs")) {
-				System.out.println("Awaiting stream");
-				byte[] test = new byte[32];
-				new HandlerStreaming.NNServerSocket(0).accept().getInputStream().read(test);
-				System.out.println("Accepted stream: " + new String(test));
-			}
-		}
 	}
 	
 	public void routePacket(Packet packet) {
