@@ -42,7 +42,6 @@ public class HandlerStreaming extends PacketHandler {
 		
 		@Override
 		public int read() throws IOException {
-			System.out.println("Read as int");
 			while(buffer.size() < 1) { try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
@@ -54,7 +53,6 @@ public class HandlerStreaming extends PacketHandler {
 		
 		@Override
 		public int read(byte[] b) throws IOException {
-			System.out.println("Read as byte[" + b.length + "]");
 			int i;
 			for(i = 0; i < b.length; i++) {
 				while(buffer.size() < 1) { try {
@@ -71,7 +69,6 @@ public class HandlerStreaming extends PacketHandler {
 		
 		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
-			System.out.println("Read as byte[" + b.length + "] with off=" + off + " and len=" + len);
 			byte[] buffer = new byte[len];
 			read(buffer);
 			
@@ -242,11 +239,9 @@ public class HandlerStreaming extends PacketHandler {
 			EndPoint pep = new EndPoint(packet.getSource(), portID);
 			
 			if(streams.containsKey(pep)) {
-				port.log("adding data to stream");
 				streams.get(pep).in.addInput(buffer);
 			}
 			else if(servers.containsKey(portID)) {
-				port.log("Incoming stream accepted");
 				servers.get(portID).waitingSockets.add(new NNSocket(16, portID, pep.addr));
 				streams.get(pep).in.addInput(buffer);
 			}
