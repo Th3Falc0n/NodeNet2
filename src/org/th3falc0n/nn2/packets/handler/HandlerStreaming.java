@@ -73,13 +73,13 @@ public class HandlerStreaming extends PacketHandler {
 		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
 			byte[] buffer = new byte[len];
-			read(buffer);
+			int readBytes = read(buffer);
 			
-			for(int i = 0; i < len; i++) {
+			for(int i = 0; i < readBytes; i++) {
 				b[i+off] = buffer[i];
 			}
  			
-			return len;
+			return readBytes;
 		}
 		
 		public void addInput(byte[] in) {
