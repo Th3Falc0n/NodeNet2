@@ -3,6 +3,7 @@ package org.th3falc0n.nn2;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,11 @@ public class Router {
 				new HandlerStreaming.NNSocket(16, 0, new Address(command[1])).getOutputStream().write(new String("Hallo da drauﬂen dies muss ein langer String werden :)").getBytes());
 			}
 			
+			if(command[0].equalsIgnoreCase("sstr"))  {
+				new OutputStreamWriter(new HandlerStreaming.NNSocket(16, 0, new Address(command[1])).getOutputStream()).write("Hallo da drauﬂen dies muss ein langer String werden :)\n");
+				
+			}
+			
 			if(command[0].equalsIgnoreCase("strs")) {
 				System.out.println("Awaiting stream");
 				byte[] test = new byte[32];
@@ -85,7 +91,6 @@ public class Router {
 				p.setAddressOptimized(packet.getDestination());
 			}			
 			if(packet.getDestination().toString().equals(p.remoteAddress.toString())) {
-				p.log("DC-Routed packet from " + packet.getSource().toString());
 				p.enqueuePacket(packet);
 				return;
 			}
@@ -93,14 +98,12 @@ public class Router {
 
 		Port ideal = getIdealPortForAddress(packet.getDestination());
 		if(ideal != null) {
-			ideal.log("HP-Routed packet from " + packet.getSource().toString());
 			ideal.enqueuePacket(packet);
 			return;
 		}
 
 		Port rnd = ports.get(new Random().nextInt(ports.size()));
 		
-		rnd.log("RND-Routed packet from " + packet.getSource().toString());
 		rnd.enqueuePacket(packet);
 	}
 	

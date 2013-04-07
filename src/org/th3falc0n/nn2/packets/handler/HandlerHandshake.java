@@ -28,7 +28,6 @@ public class HandlerHandshake extends PacketHandler {
 				Router.$Instance.getRoutes().get(port).put(port.getRemoteAddress().toString(), 0);
 				port.setValidated();
 				port.enqueuePacket(getAcceptPacket(port.getRemoteAddress()));
-				port.log("Handshake successfull.");
 			}
 			else
 			{
@@ -36,7 +35,6 @@ public class HandlerHandshake extends PacketHandler {
 					port.setRemoteAddress(packet.getSource());
 					Router.$Instance.getRoutes().get(port).put(port.getRemoteAddress().toString(), 0);
 					port.setValidated();
-					port.log("Handshake successfull.");
 				}
 				else
 				{

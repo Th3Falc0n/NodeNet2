@@ -30,7 +30,7 @@ public class Packet {
 		stream.write(from.getArray());
 		stream.writeInt(length);
 		
-		if(data != null) {
+		if(length > 0) {
 			stream.write(data);
 		}
 		
@@ -38,10 +38,10 @@ public class Packet {
 	}
 	
 	public static Packet pullFromStream(DataInputStream stream) throws IOException {		
-		int id = stream.readInt();
 		byte[] to = new byte[16];
 		byte[] from = new byte[16];
-		
+
+		int id = stream.readInt();
 		int hops = stream.readInt();
 		
 		stream.read(to);

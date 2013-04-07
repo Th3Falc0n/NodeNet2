@@ -22,7 +22,27 @@ public class HandlerStreaming extends PacketHandler {
 		Queue<Byte> buffer = new ConcurrentLinkedQueue<Byte>();
 		
 		@Override
+		public int available() throws IOException {
+			return buffer.size();
+		}
+		
+		@Override
+		public boolean markSupported() {
+			return false;
+		}
+		
+		@Override
+		public long skip(long n) throws IOException {
+			for(;n > 0;n--) {
+				read();
+			}
+			
+			return n;
+		}
+		
+		@Override
 		public int read() throws IOException {
+			System.out.println("Read as int");
 			while(buffer.size() < 1) { try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
@@ -34,6 +54,7 @@ public class HandlerStreaming extends PacketHandler {
 		
 		@Override
 		public int read(byte[] b) throws IOException {
+			System.out.println("Read as byte[" + b.length + "]");
 			int i;
 			for(i = 0; i < b.length; i++) {
 				while(buffer.size() < 1) { try {
@@ -50,15 +71,14 @@ public class HandlerStreaming extends PacketHandler {
 		
 		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
+			System.out.println("Read as byte[" + b.length + "] with off=" + off + " and len=" + len);
 			byte[] buffer = new byte[len];
 			read(buffer);
 			
-			ByteBuffer buf = ByteBuffer.wrap(b);
-			
-			buf.put(buffer, off, len);
-			
-			b = buf.array();
-			
+			for(int i = 0; i < len; i++) {
+				b[i+off] = buffer[i];
+			}
+ 			
 			return len;
 		}
 		
@@ -215,11 +235,14 @@ public class HandlerStreaming extends PacketHandler {
 		
 		if(subID == 0) {
 			byte[] buffer = new byte[data.remaining()];
-			data.get(buffer);				
+			if(data.remaining() > 0) {
+				data.get(buffer);			
+			}
 			
 			EndPoint pep = new EndPoint(packet.getSource(), portID);
 			
 			if(streams.containsKey(pep)) {
+				port.log("adding data to stream");
 				streams.get(pep).in.addInput(buffer);
 			}
 			else if(servers.containsKey(portID)) {
