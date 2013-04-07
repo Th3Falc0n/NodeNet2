@@ -94,7 +94,9 @@ public class HandlerStreaming extends PacketHandler {
 		
 		@Override
 		public void write(byte[] b, int off, int len) throws IOException {
-			throw new UnsupportedOperationException();
+			for(int i = 0; i < len; i++) {
+				write(b[i+off]);
+			}
 		}
 		
 		public void checkFlush() throws IOException {
