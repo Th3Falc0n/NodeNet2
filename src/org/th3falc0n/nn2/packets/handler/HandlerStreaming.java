@@ -50,7 +50,16 @@ public class HandlerStreaming extends PacketHandler {
 		
 		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
-			throw new UnsupportedOperationException();
+			byte[] buffer = new byte[len];
+			read(buffer);
+			
+			ByteBuffer buf = ByteBuffer.wrap(b);
+			
+			buf.put(buffer, off, len);
+			
+			b = buf.array();
+			
+			return len;
 		}
 		
 		public void addInput(byte[] in) {
