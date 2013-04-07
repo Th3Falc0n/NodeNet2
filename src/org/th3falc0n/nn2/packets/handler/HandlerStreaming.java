@@ -55,7 +55,10 @@ public class HandlerStreaming extends PacketHandler {
 		public int read(byte[] b) throws IOException {
 			int i;
 			for(i = 0; i < b.length; i++) {
-				if(buffer.size() > 0) {
+				if(buffer.size() > 0 || i < 1) {
+					if(i < 1) {
+						while(buffer.size() < 1);
+					}
 					b[i] = buffer.poll();
 				}
 				else
