@@ -74,6 +74,8 @@ public class Router {
 		
 		ConnectionListener listener = new ConnectionListener();
 		listener.startListening();
+		
+		address = new Address();
 	}
 	
 	public void routePacket(Packet packet) {
