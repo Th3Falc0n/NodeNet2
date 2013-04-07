@@ -55,13 +55,13 @@ public class HandlerStreaming extends PacketHandler {
 		public int read(byte[] b) throws IOException {
 			int i;
 			for(i = 0; i < b.length; i++) {
-				while(buffer.size() < 1) { try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} }
-				b[i] = buffer.poll();
+				if(buffer.size() > 0) {
+					b[i] = buffer.poll();
+				}
+				else
+				{
+					return i;
+				}
 			}
 			
 			return i;
