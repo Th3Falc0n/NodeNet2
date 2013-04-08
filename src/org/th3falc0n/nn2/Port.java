@@ -24,6 +24,7 @@ public class Port {
 	volatile List<String> optimizedAddresses = new Vector<String>(0, 1);
 	
 	volatile Address remoteAddress;
+	volatile String  remoteVersion = "unknown";
 
 	public class SendThread extends Thread {
 		@Override
@@ -137,5 +138,13 @@ public class Port {
 		{
 			System.out.println(portID + "[" + remoteAddress.toString() + "]: " + msg);
 		}
+	}
+
+	public void setRemoteVersion(String version) {
+		remoteVersion = version;
+	}
+	
+	public String getRemoteVersion() {
+		return remoteVersion;
 	}
 }

@@ -1,6 +1,5 @@
 package org.th3falc0n.nn2.packets.handler;
 
-import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 import org.th3falc0n.nn2.Address;

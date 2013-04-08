@@ -9,7 +9,7 @@ public class HandlerHandshake extends PacketHandler {
 	public static PacketHandler $ = new HandlerHandshake();
 	
 	public static Packet getRequestPacket(Address to) {
-		Packet p = $.getEmptyPacketWithID(to);
+		Packet p = $.getEmptyPacketWithID(to);		
 		p.setData(new byte[] { 42 });
 		return p;
 	}
@@ -28,6 +28,7 @@ public class HandlerHandshake extends PacketHandler {
 				Router.$Instance.getRoutes().get(port).put(port.getRemoteAddress().toString(), 0);
 				port.setValidated();
 				port.enqueuePacket(getAcceptPacket(port.getRemoteAddress()));
+				port.enqueuePacket(HandlerVersion.getAnswerPacket(port.getRemoteAddress()));
 			}
 			else
 			{
@@ -35,6 +36,7 @@ public class HandlerHandshake extends PacketHandler {
 					port.setRemoteAddress(packet.getSource());
 					Router.$Instance.getRoutes().get(port).put(port.getRemoteAddress().toString(), 0);
 					port.setValidated();
+					port.enqueuePacket(HandlerVersion.getAnswerPacket(port.getRemoteAddress()));
 				}
 				else
 				{
