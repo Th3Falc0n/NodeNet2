@@ -12,6 +12,7 @@ public class Packet {
 	byte[] data;
 	Address to;
 	Address from;
+	Address input;
 
 	public Packet(int i, Address t, Address f) {
 		id = i;
@@ -63,6 +64,14 @@ public class Packet {
 	
 	public int getPacketID() {
 		return id;
+	}
+	
+	public void setInput(Address addr) {
+		input = addr;
+	}
+	
+	public Address getInput() {
+		return input;
 	}
 	
 	public Address getDestination() {

@@ -17,6 +17,7 @@ public abstract class PacketHandler {
 		HandlerRouting.			$.register("routing", 		1);
 		HandlerPing.			$.register("ping", 			2);
 		HandlerVersion.         $.register("version",       3);
+		HandlerDistribute.      $.register("p2pdist",       4);
 		HandlerStreaming.		$.register("streaming",  1337);
 	}
 	

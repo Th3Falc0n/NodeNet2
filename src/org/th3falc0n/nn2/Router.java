@@ -101,10 +101,17 @@ public class Router {
 			ideal.enqueuePacket(packet);
 			return;
 		}
-
-		Port rnd = ports.get(new Random().nextInt(ports.size()));
 		
-		rnd.enqueuePacket(packet);
+		boolean sent = false;
+
+		while(!sent) {
+			Port rnd = ports.get(new Random().nextInt(ports.size()));
+			
+			if(!rnd.getRemoteAddress().equals(packet.getInput()) || Router.$Instance.ports.size() <= 1) {
+				rnd.enqueuePacket(packet);
+				sent = true;
+			}
+		}
 	}
 	
 	public Port getIdealPortForAddress(Address addr) {

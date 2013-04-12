@@ -56,6 +56,7 @@ public class Port {
 			while(!stop) {
 				try {
 					Packet income = Packet.pullFromStream(in);
+					income.setInput(Port.this.getRemoteAddress());
 					income.increaseHops();
 					
 					Router.$Instance.learnRoute(Port.this, income.getSource().toString(), income.getHops());
