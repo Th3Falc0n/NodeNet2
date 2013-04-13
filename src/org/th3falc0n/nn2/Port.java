@@ -3,6 +3,7 @@ package org.th3falc0n.nn2;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
 import java.util.Queue;
@@ -147,5 +148,9 @@ public class Port {
 	
 	public String getRemoteVersion() {
 		return remoteVersion;
+	}
+
+	public InetAddress getRemoteIP() {
+		return sock.getInetAddress();
 	}
 }

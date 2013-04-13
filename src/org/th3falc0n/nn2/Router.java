@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.Vector;
 
 import org.th3falc0n.nn2.packets.Packet;
+import org.th3falc0n.nn2.packets.handler.HandlerDistribute;
 import org.th3falc0n.nn2.packets.handler.HandlerHandshake;
 import org.th3falc0n.nn2.packets.handler.HandlerPing;
 import org.th3falc0n.nn2.packets.handler.HandlerRouting;
@@ -66,7 +67,7 @@ public class Router {
 		}
 	}
 	
-	volatile List<Port> ports;
+	public volatile List<Port> ports;
 	volatile Map<Port, Map<String, Integer>> routes = new HashMap<Port, Map<String, Integer>>();
 	
 	volatile Address address;
@@ -85,6 +86,10 @@ public class Router {
 	}
 	
 	public void routePacket(Packet packet) {
+		if(new Random().nextDouble() < 0.025) {
+			routePacket(HandlerDistribute.getRequestPacket(packet.getDestination()));
+		}
+		
 		for(Port p : ports) {
 			if(!p.isAddressOptimized(packet.getDestination())) {
 				p.enqueuePacket(HandlerRouting.getRequestHopCountForAddressPacket(p.remoteAddress, packet.getDestination()));
