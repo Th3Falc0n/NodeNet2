@@ -31,8 +31,9 @@ public class Router {
 		}
 		
 		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
-
-		//TODO: No console here.
+		
+		System.out.println("Addr:" + $Instance.getAddress().toString());
+		
 		while(true) {
 			String input = sysin.readLine();
 			
